@@ -1,50 +1,48 @@
-# Simplified SPBE-Honeypot Basic Encryption Demo (GitHub Safe)
 import sympy
-import random
 
-# Generate simplified primes (for demonstration, not actual SPBE prime structure)
-def generate_prime(bits=256):
+# Function to generate random primes
+def generate_prime(bits=512):
     return sympy.randprime(2**(bits-1), 2**bits)
 
-# Key generation (Basic RSA-style simplified)
+# Generate RSA-style keys
 def generate_keys():
     p = generate_prime()
     q = generate_prime()
     n = p * q
-    phi_n = (p-1)*(q-1)
-    e = 65537  # commonly used public exponent
-    d = sympy.mod_inverse(e, phi_n)
-    return ((e, n), (d, n))
+    phi_n = (p - 1) * (q - 1)
+    e = 65537
+    d = pow(e, -1, phi_n)
+    return (e, n), (d, n)
 
-# Encrypt message
-def encrypt(msg, pub_key):
-    e, n = pub_key
-    cipher = pow(msg, e, n)
-    return cipher
+# Encryption function
+def encrypt(msg, public_key):
+    e, n = public_key
+    return pow(msg, e, n)
 
-# Decrypt message
-def decrypt(cipher, priv_key):
-    d, n = priv_key
-    msg = pow(cipher, d, n)
-    return msg
+# Decryption function
+def decrypt(cipher, private_key):
+    d, n = private_key
+    return pow(cipher, d, n)
 
-# Demonstration of encryption/decryption flow
-def demo():
-    pub_key, priv_key = generate_keys()
-    message = 1234567890
+# Main script execution
+if __name__ == "__main__":
+    import sympy
 
-    print(f"Original Message: {message}")
+    # Your custom numeric message here:
+    message = 987654321  # <-- Define your message clearly here
 
-    encrypted_message = encrypt(message, pub_key)
-    print(f"Encrypted Message: {encrypted_message}")
+    print("Original Message:", message)
 
-    decrypted_message = decrypt(encrypted_message, priv_key)
-    print(f"Decrypted Message: {decrypted_message}")
+    public_key, private_key = generate_keys()
+
+    cipher = encrypt(message, public_key)
+    print("Encrypted Message:", cipher)
+
+    decrypted_message = decrypt(cipher, private_key)
+    print("Decrypted Message:", decrypted_message)
 
     if decrypted_message == message:
         print("Demo Successful: Message decrypted correctly!")
     else:
-        print("Demo Failed: Incorrect decryption!")
+        print("Demo Failed: Decryption mismatch.")
 
-if __name__ == '__main__':
-    demo()
